@@ -29,5 +29,11 @@ public class OrderController {
     public ResponseEntity<List<OrderResponse>> getUserOrders(@RequestHeader("X-USER-ID") Long userId) {
         return ResponseEntity.ok(orderService.getOrdersForUser(userId));
     }
+
+    @GetMapping("/{orderId}")
+    public ResponseEntity<OrderResponse> getOrderById(@PathVariable Long orderId,
+                                                      @RequestHeader("X-USER-ID") Long userId) {
+        return ResponseEntity.ok(orderService.getOrderById(orderId, userId));
+    }
 }
 

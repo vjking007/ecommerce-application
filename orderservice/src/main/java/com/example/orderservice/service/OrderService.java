@@ -5,9 +5,11 @@ import com.example.orderservice.entity.Order;
 import com.example.orderservice.entity.OrderItem;
 import com.example.orderservice.enums.OrderStatus;
 import com.example.orderservice.exception.InsufficientStockException;
+import com.example.orderservice.exception.ResourceNotFoundException;
 import com.example.orderservice.repository.OrderRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -62,6 +64,20 @@ public class OrderService {
                 .map(this::toResponse)
                 .collect(Collectors.toList());
     }
+
+    @Transactional
+    public OrderResponse getOrderById(Long orderId, Long userId) {
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new ResourceNotFoundException("Order not found with ID: " + orderId));
+
+//        if (!order.getUserId().equals(userId)) {
+//            throw new UnauthorizedAccessException("You are not allowed to view this order");
+//        }
+        order.getItems().size();  // Access to force loading
+
+        return toResponse(order);
+    }
+
 
     private OrderResponse toResponse(Order order) {
         return OrderResponse.builder()
