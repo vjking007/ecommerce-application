@@ -12,8 +12,8 @@ public class SwaggerConfig {
     public OpenAPI openAPI() {
         return new OpenAPI()
                 .info(new Info()
-                        .title("Auth Service API")
+                        .title("Product Service API")
                         .version("1.0")
-                        .description("Product Service"));
+                        .description("Product Service Crud"));
     }
 }
