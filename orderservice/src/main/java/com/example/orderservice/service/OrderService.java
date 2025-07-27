@@ -21,6 +21,7 @@ public class OrderService {
 
     private final OrderRepository orderRepository;
     private final ProductClient productClient;
+    private final InventoryClient inventoryClient;
 
     public OrderResponse createOrder(CreateOrderRequest request, Long userId) {
         List<OrderItem> items = new ArrayList<>();
@@ -56,9 +57,17 @@ public class OrderService {
 
         orderRepository.save(order);
 
+        //Reduce stock for each product
+        for (OrderItem item : items) {
+            inventoryClient.reduceStock(
+                    new InventoryRequest(item.getProductId(), item.getQuantity())
+            );
+        }
+
         return toResponse(order);
     }
 
+    @Transactional
     public List<OrderResponse> getOrdersForUser(Long userId) {
         return orderRepository.findByUserId(userId).stream()
                 .map(this::toResponse)
