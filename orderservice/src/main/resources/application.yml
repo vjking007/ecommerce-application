@@ -3,7 +3,7 @@ server:
 
 spring:
   application:
-    name: auth-service
+    name: order-service
   datasource:
     url: jdbc:sqlserver://DESKTOP-I1SMM2J\SQL;databaseName=ecommerce;trustServerCertificate=true
     username: sa
