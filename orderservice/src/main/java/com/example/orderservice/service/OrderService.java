@@ -27,6 +27,7 @@ public class OrderService {
         List<OrderItem> items = new ArrayList<>();
         double total = 0;
 
+        // Step 1: Validate stock and calculate total
         for (OrderItemRequest itemRequest : request.getItems()) {
             ProductResponse product = productClient.getProductById(itemRequest.getProductId());
 
@@ -45,27 +46,46 @@ public class OrderService {
                     .build());
         }
 
-        Order order = Order.builder()
-                .userId(userId)
-                .items(items)
-                .totalPrice(total)
-                .status(OrderStatus.PENDING)
-                .build();
+        // Step 2: Reduce stock, and rollback if failure
+        try {
+            for (OrderItem item : items) {
+                inventoryClient.reduceStock(
+                        new InventoryRequest(item.getProductId(), item.getQuantity())
+                );
+            }
 
-        // Set bi-directional
-        items.forEach(i -> i.setOrder(order));
+            // Step 3: Create order
+            Order order = Order.builder()
+                    .userId(userId)
+                    .items(items)
+                    .totalPrice(total)
+                    .status(OrderStatus.PENDING)
+                    .build();
 
-        orderRepository.save(order);
+            // Set bi-directional relationship
+            items.forEach(i -> i.setOrder(order));
 
-        //Reduce stock for each product
-        for (OrderItem item : items) {
-            inventoryClient.reduceStock(
-                    new InventoryRequest(item.getProductId(), item.getQuantity())
-            );
+            orderRepository.save(order);
+            return toResponse(order);
+
+        } catch (Exception ex) {
+            // Rollback logic: increase stock
+            for (OrderItem item : items) {
+                try {
+                    inventoryClient.increaseStock(
+                            new InventoryRequest(item.getProductId(), item.getQuantity())
+                    );
+                } catch (Exception rollbackEx) {
+                    // log rollback failure
+                    System.err.println("Failed to rollback stock for product: " + item.getProductId());
+                }
+            }
+
+            // Rethrow or handle exception
+            throw new RuntimeException("Order creation failed. Rolled back stock. Reason: " + ex.getMessage());
         }
-
-        return toResponse(order);
     }
+
 
     @Transactional
     public List<OrderResponse> getOrdersForUser(Long userId) {

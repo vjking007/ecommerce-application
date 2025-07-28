@@ -30,4 +30,9 @@ public class InventoryController {
         inventoryService.reduceStock(request.getProductId(), request.getQuantity());
         return ResponseEntity.ok().build();
     }
+    @PostMapping("/increase")
+    public ResponseEntity<Void> increaseStock(@RequestBody InventoryRequest request) {
+        inventoryService.increaseStock(request.getProductId(), request.getQuantity());
+        return ResponseEntity.ok().build();
+    }
 }

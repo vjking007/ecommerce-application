@@ -47,5 +47,13 @@ public class InventoryService {
         inventory.setQuantity(inventory.getQuantity() + quantity);
         inventoryRepository.save(inventory);
     }
+
+    public void increaseStock(Long productId, int quantity) {
+        Inventory inventory = inventoryRepository.findByProductId(productId)
+                .orElseThrow(() -> new ProductNotFoundException("Product not found"));
+
+        inventory.setQuantity(inventory.getQuantity() + quantity);
+        inventoryRepository.save(inventory);
+    }
 }
 
