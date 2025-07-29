@@ -1,0 +1,17 @@
+services:
+  splunk:
+    image: splunk/splunk:latest
+    container_name: splunk
+    environment:
+      SPLUNK_START_ARGS: "--accept-license"
+      SPLUNK_PASSWORD: "admin@123"     # Set your own strong password
+    ports:
+      - "8000:8000"     # Web UI
+      - "8088:8088"     # HTTP Event Collector (HEC)
+      - "9997:9997"     # For forwarders (if used)
+    restart: unless-stopped
+    volumes:
+      - splunk_data:/opt/splunk
+
+volumes:
+  splunk_data:
