@@ -8,6 +8,7 @@ import com.example.orderservice.exception.InsufficientStockException;
 import com.example.orderservice.exception.ResourceNotFoundException;
 import com.example.orderservice.repository.OrderRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -15,16 +16,22 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class OrderService {
 
     private final OrderRepository orderRepository;
     private final ProductClient productClient;
+    private final InventoryClient inventoryClient;
 
     public OrderResponse createOrder(CreateOrderRequest request, Long userId) {
+        log.info("Creating order for user: {}", userId);
+
         List<OrderItem> items = new ArrayList<>();
         double total = 0;
+
+        log.info("Step 1: Validate stock and calculate total");
 
         for (OrderItemRequest itemRequest : request.getItems()) {
             ProductResponse product = productClient.getProductById(itemRequest.getProductId());
@@ -44,22 +51,56 @@ public class OrderService {
                     .build());
         }
 
-        Order order = Order.builder()
-                .userId(userId)
-                .items(items)
-                .totalPrice(total)
-                .status(OrderStatus.PENDING)
-                .build();
 
-        // Set bi-directional
-        items.forEach(i -> i.setOrder(order));
+        log.info("Step 2: Reduce stock, and rollback if failure");
 
-        orderRepository.save(order);
+        try {
+            for (OrderItem item : items) {
+                inventoryClient.reduceStock(
+                        new InventoryRequest(item.getProductId(), item.getQuantity())
+                );
+            }
 
-        return toResponse(order);
+            log.info("Step 3: Create order");
+
+            Order order = Order.builder()
+                    .userId(userId)
+                    .items(items)
+                    .totalPrice(total)
+                    .status(OrderStatus.PENDING)
+                    .build();
+
+
+            log.info("Set bi-directional relationship");
+
+            items.forEach(i -> i.setOrder(order));
+
+            orderRepository.save(order);
+            return toResponse(order);
+
+        } catch (Exception ex) {
+            log.info("Rollback logic: increase stock");
+
+            for (OrderItem item : items) {
+                try {
+                    inventoryClient.increaseStock(
+                            new InventoryRequest(item.getProductId(), item.getQuantity())
+                    );
+                } catch (Exception rollbackEx) {
+                    // log rollback failure
+                    System.err.println("Failed to rollback stock for product: " + item.getProductId());
+                }
+            }
+
+            // Rethrow or handle exception
+            throw new RuntimeException("Order creation failed. Rolled back stock. Reason: " + ex.getMessage());
+        }
     }
 
+
+    @Transactional
     public List<OrderResponse> getOrdersForUser(Long userId) {
+        log.info("Fetching orders for user: {}", userId);
         return orderRepository.findByUserId(userId).stream()
                 .map(this::toResponse)
                 .collect(Collectors.toList());
@@ -67,6 +108,7 @@ public class OrderService {
 
     @Transactional
     public OrderResponse getOrderById(Long orderId, Long userId) {
+        log.info("Fetching order with ID: {} for user: {}", orderId, userId);
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new ResourceNotFoundException("Order not found with ID: " + orderId));
 

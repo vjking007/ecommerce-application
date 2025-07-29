@@ -3,7 +3,7 @@ server:
 
 spring:
   application:
-    name: auth-service
+    name: product-service
   datasource:
     url: jdbc:sqlserver://DESKTOP-I1SMM2J\SQL;databaseName=ecommerce;trustServerCertificate=true
     username: sa
@@ -18,3 +18,14 @@ spring:
     show_sql: true
     hibernate:
       ddl-auto: none
+
+  cloud:
+      compatibility-verifier:
+         enabled: false
+
+eureka:
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    service-url:
+      defaultZone: http://localhost:8761/eureka

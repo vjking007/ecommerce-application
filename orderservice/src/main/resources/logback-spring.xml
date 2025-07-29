@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+
+    <!-- Console logging -->
+    <appender name="Console" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!-- Splunk HTTP Appender -->
+    <appender name="SPLUNK" class="com.splunk.logging.HttpEventCollectorLogbackAppender">
+        <!-- Replace with your Splunk HEC Token -->
+        <token>24fe0e53-ac84-42c9-8cea-74cff8a99b5b</token>
+
+        <!-- Replace with your Splunk HEC endpoint -->
+        <url>http://localhost:8088</url>
+
+        <!-- Optional: index and source type -->
+        <index>order_api_dev</index>
+        <sourcetype>log4j</sourcetype>
+        <source>http-event-logs</source>
+        <host>localhost</host>
+
+        <batch_size_count>1</batch_size_count> <!-- Sends logs immediately -->
+        <send_mode>sequential</send_mode>
+
+        <layout class="ch.qos.logback.classic.PatternLayout">
+            <pattern>%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n</pattern>
+        </layout>
+    </appender>
+
+    <!-- Root logger -->
+    <root level="INFO">
+        <appender-ref ref="Console"/>
+        <appender-ref ref="SPLUNK"/>
+    </root>
+
+</configuration>
