@@ -44,4 +44,13 @@ public class JwtService {
         final String username = extractUsername(token);
         return username.equals(userDetails.getUsername());
     }
+
+    public boolean isTokenValid(String token) {
+        try {
+            Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
 }
