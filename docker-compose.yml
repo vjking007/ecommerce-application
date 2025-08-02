@@ -13,5 +13,11 @@ services:
     volumes:
       - splunk_data:/opt/splunk
 
+  zipkin:
+    image: openzipkin/zipkin
+    container_name: zipkin
+    ports:
+      - "9411:9411"
+
 volumes:
   splunk_data:
