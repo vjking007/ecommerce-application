@@ -70,6 +70,13 @@
 			<version>0.11.5</version>
 			<scope>runtime</scope>
 		</dependency>
+		<!-- Add this if you're using servlet filters like CorsFilter -->
+		<dependency>
+			<groupId>jakarta.servlet</groupId>
+			<artifactId>jakarta.servlet-api</artifactId>
+			<version>6.0.0</version>
+			<scope>provided</scope>
+		</dependency>
 
 		<!-- Lombok to reduce boilerplate code -->
 		<dependency>
