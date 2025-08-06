@@ -13,11 +13,12 @@ public class CorsGlobalConfiguration {
 
     @Bean
     public CorsWebFilter corsWebFilter() {
+        System.out.println("Hey");
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowCredentials(true);
-        config.setAllowedOriginPatterns(List.of("*")); // You can change to specific origins
+        config.setAllowedOriginPatterns(List.of("http://localhost:4200")); // or your frontend domain // You can change to specific origins
         config.setAllowedHeaders(List.of("*"));
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        config.setAllowCredentials(true);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", config);
