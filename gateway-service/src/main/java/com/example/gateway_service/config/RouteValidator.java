@@ -13,11 +13,12 @@ public class RouteValidator {
             "api/auth/register",
             "api/auth/login",
             "api/auth/validate",
-            "/eureka"
+            "/eureka",
+            "api/products"
     );
 
     public Predicate<ServerHttpRequest> isSecured =
             request -> openApiEndpoints
                     .stream()
-                    .noneMatch(uri -> request.getURI().getPath().contains(uri));
+                    .noneMatch(uri -> request.getURI().getPath().startsWith(uri));
 }

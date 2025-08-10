@@ -41,7 +41,7 @@ public class AuthController {
 
     //Added for Api Gateway
     @PostMapping("/validate")
-    public ResponseEntity<?> validateToken(@RequestHeader("Authorization") String token) {
+    public ResponseEntity<?> validateToken(@RequestParam("token") String token) {
         try {
             String username = jwtService.extractUsername(token.replace("Bearer ", ""));
             return ResponseEntity.ok(Map.of("username", username));

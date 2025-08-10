@@ -24,6 +24,7 @@ public class JWTUtil {
     }
 
     public String extractUsername(String token) {
+        System.out.println("Token "+token);
         return extractClaim(token, Claims::getSubject);
 
     }

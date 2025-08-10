@@ -6,13 +6,13 @@ spring:
     name: gateway-service
   main:
      allow-bean-definition-overriding: true
+
   cloud:
     gateway:
-      routes:
-        - id: auth-service
-          uri: lb://auth-service
-          predicates:
-             - Path=/api/auth/**
+     # No need to define routes here since you are using Java-based RouteLocator
+       discovery:
+         locator:
+           enabled: false  # disable automatic route discovery if not used
 
 eureka:
   client:
