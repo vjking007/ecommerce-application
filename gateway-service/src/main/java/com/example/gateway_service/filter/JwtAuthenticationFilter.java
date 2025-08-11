@@ -1,61 +1,78 @@
 package com.example.gateway_service.filter;
 
 import com.example.gateway_service.config.RouteValidator;
-import com.example.gateway_service.utils.JWTUtil;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
-import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory;
-import org.springframework.http.*;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.cloud.gateway.filter.GatewayFilterChain;
+import org.springframework.core.Ordered;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
+import org.springframework.http.server.reactive.ServerHttpRequest;
+import org.springframework.http.server.reactive.ServerHttpResponse;
 import org.springframework.stereotype.Component;
-import org.springframework.web.client.RestTemplate;
-
-import java.util.List;
-import java.util.stream.Collectors;
-
+import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.server.ServerWebExchange;
+import reactor.core.publisher.Mono;
 
 @Component
-public class JwtAuthenticationFilter extends AbstractGatewayFilterFactory<JwtAuthenticationFilter.Config> {
+public class JwtAuthenticationFilter implements GatewayFilter, Ordered {
 
-    private final RouteValidator validator;
+    private final WebClient.Builder webClientBuilder;
+    private final RouteValidator routeValidator;
 
-    @Autowired
-    private RestTemplate template;
-
-    public JwtAuthenticationFilter(RouteValidator validator) {
-        super(Config.class);
-        this.validator = validator;
+    public JwtAuthenticationFilter(WebClient.Builder webClientBuilder, RouteValidator routeValidator) {
+        this.webClientBuilder = webClientBuilder;
+        this.routeValidator = routeValidator;
     }
 
     @Override
-    public GatewayFilter apply(Config config) {
-        return ((exchange, chain) -> {
-            System.out.println("Request :" + exchange.getRequest());
-            if (validator.isSecured.test(exchange.getRequest())) {
-                if (!exchange.getRequest().getHeaders().containsKey(HttpHeaders.AUTHORIZATION)) {
-                    throw new RuntimeException("Missing authorization header");
-                }
+    public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
+        ServerHttpRequest request = exchange.getRequest();
+//        String path = request.getURI().getPath();
 
-                String authHeader = exchange.getRequest().getHeaders().get(HttpHeaders.AUTHORIZATION).get(0);
-                if (authHeader != null && authHeader.startsWith("Bearer ")) {
-                    authHeader = authHeader.substring(7);
-                }
-
-                try {
-                    // Validate token by calling auth-service
-                    template.getForObject("http://AUTH-SERVICE/api/auth/validate?token=" + authHeader, String.class);
-                } catch (Exception e) {
-                    System.out.println("Invalid Token: " + e.getMessage());
-                    throw new RuntimeException("Unauthorized Access to Application");
-                }
-            }
+        if (!routeValidator.isSecured.test(request)) {
+            // Skip JWT check for public endpoints
             return chain.filter(exchange);
-        });
+        }
+//        // Skip authentication for login/signup
+//        if (path.startsWith("/api/auth/login") || path.startsWith("/api/auth/signup")) {
+//            return chain.filter(exchange);
+//        }
+
+        // Check Authorization header
+        String authHeader = request.getHeaders().getFirst(HttpHeaders.AUTHORIZATION);
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            return this.onError(exchange, "Missing or invalid Authorization header", HttpStatus.UNAUTHORIZED);
+        }
+
+        String token = authHeader.substring(7);
+
+        // Call Auth Service to validate token
+        return webClientBuilder.build()
+                .get()
+                .uri("http://auth-service/api/auth/validate?token=" + token)
+                .retrieve()
+                .onStatus(HttpStatusCode::isError, clientResponse ->
+                        Mono.error(new RuntimeException("Token validation failed"))
+                )
+                .bodyToMono(Boolean.class)
+                .flatMap(isValid -> {
+                    if (!isValid) {
+                        return onError(exchange, "Invalid token", HttpStatus.UNAUTHORIZED);
+                    }
+                    return chain.filter(exchange);
+                });
     }
 
-    public static class Config {
+    // Helper method for sending error responses
+    private Mono<Void> onError(ServerWebExchange exchange, String err, HttpStatus httpStatus) {
+        ServerHttpResponse response = exchange.getResponse();
+        response.setStatusCode(httpStatus);
+        return response.setComplete();
+    }
+
+    @Override
+    public int getOrder() {
+        return -1; // Priority
     }
 }
-
