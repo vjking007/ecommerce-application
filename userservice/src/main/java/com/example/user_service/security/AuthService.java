@@ -7,15 +7,11 @@ import com.example.user_service.entity.User;
 import com.example.user_service.enums.Role;
 import com.example.user_service.exception.EmailAlreadyExistsException;
 import com.example.user_service.repository.UserRepository;
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class AuthService {
@@ -37,7 +33,7 @@ public class AuthService {
 
         User user = User.builder()
                 .email(request.getEmail())
-                .fullName(request.getFullName())
+                .fullName(request.getUsername())
                 .password(passwordEncoder.encode(request.getPassword()))
                 .role(Role.USER)
                 .build();
@@ -53,6 +49,8 @@ public class AuthService {
     }
 
     public String login(LoginRequest request) {
+        System.out.println("User "+request.getEmail());
+        System.out.println("User "+request.getPassword());
         User user = userRepository.findByEmail(request.getEmail())
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
 

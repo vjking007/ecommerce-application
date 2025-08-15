@@ -40,13 +40,15 @@ public class AuthController {
     }
 
     //Added for Api Gateway
-    @PostMapping("/validate")
-    public ResponseEntity<?> validateToken(@RequestHeader("Authorization") String token) {
+    @GetMapping("/validate")
+    public ResponseEntity<?> validateToken(@RequestParam("token") String token) {
         try {
             String username = jwtService.extractUsername(token.replace("Bearer ", ""));
-            return ResponseEntity.ok(Map.of("username", username));
+//            return ResponseEntity.ok(Map.of("username", username));
+            return ResponseEntity.ok(true);
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid token");
+//            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid token");
+            return ResponseEntity.ok(false);
         }
     }
 }
