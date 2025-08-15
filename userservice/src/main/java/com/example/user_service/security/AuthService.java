@@ -49,8 +49,6 @@ public class AuthService {
     }
 
     public String login(LoginRequest request) {
-        System.out.println("User "+request.getEmail());
-        System.out.println("User "+request.getPassword());
         User user = userRepository.findByEmail(request.getEmail())
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
 
@@ -58,7 +56,7 @@ public class AuthService {
             throw new BadCredentialsException("Invalid credentials");
         }
 
-        return jwtService.generateToken(user.getEmail());
+        return jwtService.generateToken(user.getEmail(), user.getId());
     }
 
     public UserResponse getProfile(String userName) {
