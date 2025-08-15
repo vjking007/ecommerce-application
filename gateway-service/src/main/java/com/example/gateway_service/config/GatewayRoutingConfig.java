@@ -20,7 +20,13 @@
                     .route("product-service", r -> r.path("/api/products/**")
                             .filters(f ->
                                     f.filter(jwtAuthenticationFilter))
-                            .uri("lb://producer-service"))
+                            .uri("lb://product-service"))
+
+                    //Product-Service (Product Service Call)
+                    .route("cart-service", r -> r.path("/api/cart/**")
+                            .filters(f ->
+                                    f.filter(jwtAuthenticationFilter))
+                            .uri("lb://cart-service"))
 
                     .build();
         }
