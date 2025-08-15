@@ -1,0 +1,36 @@
+<div class="container mt-4" *ngIf="cart">
+  <h3>Your Cart</h3>
+  <table class="table table-bordered mt-3">
+    <thead>
+    <tr>
+      <th>Product ID</th>
+      <th>Price</th>
+      <th>Quantity</th>
+      <th>Total</th>
+      <th>Actions</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr *ngFor="let item of cart.items">
+      <td>{{ item.productId }}</td>
+      <td>{{ item.price | currency }}</td>
+      <td>
+        <input type="number" [(ngModel)]="item.quantity" min="1"
+               (change)="updateQuantity(item.productId, item.quantity)"
+               class="form-control" style="width: 80px;">
+      </td>
+      <td>{{ item.price * item.quantity | currency }}</td>
+      <td>
+        <button class="btn btn-danger btn-sm"
+                (click)="removeItem(item.productId)">
+          Remove
+        </button>
+      </td>
+    </tr>
+    </tbody>
+  </table>
+
+  <div class="text-end">
+    <strong>Grand Total:</strong> {{ totalPrice}}
+  </div>
+</div>
