@@ -44,11 +44,10 @@ export class LoginComponent {
       next: (res) => {
       // this.toastr.success('Login successful');
        this.authService.saveToken(res.token);
-        console.log("Hey")
-       console.log(res.token);
-               const username = this.authService.getUsernameFromToken();
-               this.authService.setLoggedInUsername(username!);
-               this.router.navigate(['/products']);
+
+       const username = this.authService.getUsernameFromToken();
+       this.authService.setLoggedInUsername(username!);
+       this.router.navigate(['/products']);
       },
       error: () => {
         this.toastr.error('Invalid username or password');

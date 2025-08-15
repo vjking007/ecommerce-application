@@ -6,6 +6,7 @@ import { CartService } from '../../cart/cart.service';
 import { ToastrService } from 'ngx-toastr';
 import { CartResponse } from 'src/app/shared/models/cart-response.model';
 import { AddItemRequest } from 'src/app/shared/models/add-item-request.model';
+import  { AuthService } from '../../core/auth.service';
 
 @Component({
   selector: 'app-product-detail',
@@ -16,14 +17,14 @@ export class ProductDetailComponent implements OnInit {
 
    product!: Product;
    cart: CartResponse | null = null;
-   userId = 1; // Get from auth service in real app
    totalPrice: number = 0;
    selectedQuantity: number = 1; // Default 1 quantity
 
    constructor(private route: ActivatedRoute,
    private productService: ProductService,
    private cartService: CartService,
-   private toastr: ToastrService) {}
+   private toastr: ToastrService,
+   private authService: AuthService) {}
 
     ngOnInit(): void {
       const id = this.route.snapshot.params['id'];
@@ -32,17 +33,19 @@ export class ProductDetailComponent implements OnInit {
       });
     }
 
-     addToCart(productId: number, price: number) {
-     const request: AddItemRequest = { productId, this.selectedQuantity, price };
-       this.cartService.addItem(this.userId, request).subscribe({
-         next: (response) => {
+     addToCart(productId: number, quantity:number, price: number) {
+     const userId=this.authService.getUserIdFromToken();
+     console.log(userId);
+     const request: AddItemRequest = { productId, quantity, price };
+           this.cartService.addItem(userId, request).subscribe({
+             next: (response) => {
 
-          this.cart = response;
-          this.calculateTotal();
-          this.toastr.success('Item added to cart!');
-          },
-         error: () => this.toastr.error('Failed to add item')
-       });
+              this.cart = response;
+              this.calculateTotal();
+              this.toastr.success('Item added to cart!');
+              },
+             error: () => this.toastr.error('Failed to add item')
+           });
      }
 
       /** Calculate total price */

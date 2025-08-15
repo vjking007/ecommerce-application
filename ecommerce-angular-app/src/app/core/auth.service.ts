@@ -57,12 +57,10 @@ export class AuthService {
   login(credentials: { email: string; password: string }): Observable<any> {
     return this.http.post<{ token: string }>(`${this.baseUrl}/login`, credentials).pipe(
       tap(response => {
-        console.log('Login Response:', response);
         if (response.token) {
           localStorage.setItem('token', response.token);
           // Optionally decode the token to extract user info
           const decodedToken = jwtDecode(response.token);
-          console.log('Decoded Token:', decodedToken);
        //   this.loggedInUsername.next(decodedToken); // or create a User object manually
         }
       })
@@ -80,5 +78,14 @@ export class AuthService {
 
   isLoggedIn(): boolean {
     return !this.isTokenExpired();
+  }
+
+  getUserIdFromToken(): number {
+    const token = localStorage.getItem('token');
+    if (!token) {return 0;}
+    else {
+    const decoded: any = jwtDecode(token);
+    return decoded?.userId;
+    }
   }
 }
