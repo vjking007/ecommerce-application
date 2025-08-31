@@ -35,7 +35,7 @@ public class AuthService {
                 .email(request.getEmail())
                 .fullName(request.getUsername())
                 .password(passwordEncoder.encode(request.getPassword()))
-                .role(Role.USER)
+                .role(request.getRole())
                 .build();
 
         userRepository.save(user);
@@ -56,7 +56,7 @@ public class AuthService {
             throw new BadCredentialsException("Invalid credentials");
         }
 
-        return jwtService.generateToken(user.getEmail(), user.getId());
+        return jwtService.generateToken(user);
     }
 
     public UserResponse getProfile(String userName) {

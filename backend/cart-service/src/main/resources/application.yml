@@ -6,8 +6,8 @@ spring:
     name: cart-service
   datasource:
     url: jdbc:sqlserver://DESKTOP-I1SMM2J\SQL;databaseName=ecommerce;trustServerCertificate=true
-    username: sa
-    password: sql@123
+    username: ecom
+    password: Ecom@12345
     driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
 
   jpa:

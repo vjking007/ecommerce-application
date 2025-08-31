@@ -1,5 +1,6 @@
 package com.example.user_service.security;
 
+import com.example.user_service.entity.User;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import lombok.extern.slf4j.Slf4j;
@@ -24,13 +25,14 @@ public class JwtService {
 
     private final Key key = Keys.hmacShaKeyFor(SECRET.getBytes());
 
-    public String generateToken(String username, Long id) {
+    public String generateToken(User user) {
         Map<String, Object> claims = new HashMap<>();
-        claims.put("userId", id); // ✅ userId in token
+        claims.put("userId", user.getId()); // userId in token
+        claims.put("role", user.getRole()); // role in token
 
         return Jwts.builder()
                 .setClaims(claims)
-                .setSubject(username)
+                .setSubject(user.getFullName())
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + 600000)) // 1 day
                 .signWith(key, SignatureAlgorithm.HS256) // correct method
