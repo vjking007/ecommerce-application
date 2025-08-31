@@ -43,11 +43,19 @@ export class LoginComponent {
     this.authService.login(this.loginForm.value).subscribe({
       next: (res) => {
       // this.toastr.success('Login successful');
+
        this.authService.saveToken(res.token);
 
        const username = this.authService.getUsernameFromToken();
+       const role = this.authService.getRoleFromToken();
+
        this.authService.setLoggedInUsername(username!);
-       this.router.navigate(['/products']);
+
+       if(role==='ADMIN'){
+         this.router.navigate(['/admin/products']);
+       } else {
+          this.router.navigate(['/products']);
+       }
       },
       error: () => {
         this.toastr.error('Invalid username or password');

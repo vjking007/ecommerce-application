@@ -32,6 +32,19 @@ export class AuthService {
     }
   }
 
+  getRoleFromToken(): string | null {
+      const token = localStorage.getItem('token');
+      if (!token) return null;
+
+      try {
+        const decoded: any = jwtDecode(token);
+        return decoded.role || null;  // Depends on backend
+      } catch (e) {
+        console.error('Invalid token userid decode', e);
+        return null;
+      }
+    }
+
   setLoggedInUsername(username: string) {
     this.loggedInUsername.next(username);
   }
