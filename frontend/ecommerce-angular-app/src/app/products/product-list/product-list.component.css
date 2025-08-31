@@ -1,0 +1,15 @@
+.card {
+  height: 200px; /* or any fixed height */
+  display: flex;
+  flex-direction: column;
+}
+
+.card-body {
+  flex-grow: 1;
+}
+
+.card-footer {
+  background: transparent;
+  border: none;
+  margin-top: auto;
+}

@@ -18,8 +18,8 @@
         </processorPath>
         <module name="cart-service" />
         <module name="gateway-service" />
-        <module name="userservice" />
         <module name="productservice" />
+        <module name="userservice" />
         <module name="inventoryservice" />
         <module name="paymentservice" />
         <module name="notification-service" />

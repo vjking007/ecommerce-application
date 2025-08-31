@@ -1,0 +1,40 @@
+<div class="container">
+  <h3>{{ isEdit ? 'Edit Product' : 'Add Product' }}</h3>
+
+  <form (ngSubmit)="onSubmit()" #productForm="ngForm">
+    <div class="mb-3">
+      <label>Name</label>
+      <input type="text" class="form-control" [(ngModel)]="product.name" name="name" required>
+    </div>
+
+    <div class="mb-3">
+      <label>Description</label>
+      <input type="text" class="form-control" [(ngModel)]="product.description" name="description" required>
+    </div>
+
+    <div class="mb-3">
+      <label>Price</label>
+      <input type="number" class="form-control" [(ngModel)]="product.price" name="price" required>
+    </div>
+
+    <div class="mb-3">
+      <label>Stock</label>
+      <input type="number" class="form-control" [(ngModel)]="product.stock" name="stock" required>
+    </div>
+
+    <div class="mb-3">
+      <label>Category</label>
+      <input type="text" class="form-control" [(ngModel)]="product.category" name="category" required>
+    </div>
+
+    <div class="mb-3">
+      <label>Active</label>
+      <input type="checkbox" [(ngModel)]="product.active" name="active" (change)="toggleActive(product)">
+    </div>
+
+    <button class="btn btn-success" type="submit">
+      {{ isEdit ? 'Update' : 'Save' }}
+    </button>
+    <a routerLink="/admin/products" class="btn btn-secondary">Cancel</a>
+  </form>
+</div>

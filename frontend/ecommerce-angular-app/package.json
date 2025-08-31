@@ -1,0 +1,45 @@
+{
+  "name": "ecommerce-angular-app",
+  "version": "1.0.0",
+  "scripts": {
+    "ng": "ng",
+    "start": "ng serve",
+    "build": "ng build --prod",
+    "test": "ng test",
+    "lint": "ng lint",
+    "e2e": "ng e2e"
+  },
+  "private": true,
+  "dependencies": {
+    "@angular/animations": "12.2.17",
+    "@angular/common": "12.2.17",
+    "@angular/compiler": "12.2.17",
+    "@angular/core": "12.2.17",
+    "@angular/forms": "12.2.17",
+    "@angular/platform-browser": "12.2.17",
+    "@angular/platform-browser-dynamic": "12.2.17",
+    "@angular/router": "12.2.17",
+    "bootstrap": "^5.3.7",
+    "jwt-decode": "^4.0.0",
+    "ngx-toastr": "^13.2.1",
+    "rxjs": "6.6.7",
+    "tslib": "^2.3.0",
+    "zone.js": "~0.11.4"
+  },
+  "devDependencies": {
+    "@angular-devkit/build-angular": "12.2.17",
+    "@angular/cli": "12.2.17",
+    "@angular/compiler-cli": "12.2.17",
+    "@angular/language-service": "12.2.17",
+    "@types/jasmine": "~3.8.0",
+    "@types/node": "^12.20.36",
+    "jasmine-core": "~3.8.0",
+    "jasmine-spec-reporter": "~7.0.0",
+    "karma": "~6.3.4",
+    "karma-chrome-launcher": "~3.1.0",
+    "karma-coverage": "~2.0.3",
+    "karma-jasmine": "~4.0.0",
+    "karma-jasmine-html-reporter": "~1.7.0",
+    "typescript": "4.3.5"
+  }
+}
