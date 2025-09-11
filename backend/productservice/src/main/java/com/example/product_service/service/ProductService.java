@@ -26,7 +26,7 @@ public class ProductService {
                 .description(request.getDescription())
                 .price(request.getPrice())
                 .stock(request.getStock())
-                .category(request.getCategory())
+                .category(Category.valueOf(request.getCategory()))
                 .active(request.getActive())
                 .build();
         productRepository.save(product);
@@ -52,7 +52,7 @@ public class ProductService {
         product.setDescription(request.getDescription());
         product.setPrice(request.getPrice());
         product.setStock(request.getStock());
-        product.setCategory(request.getCategory());
+        product.setCategory(Category.valueOf(request.getCategory()));
         product.setActive(request.getActive());
         productRepository.save(product);
         return toResponse(product);

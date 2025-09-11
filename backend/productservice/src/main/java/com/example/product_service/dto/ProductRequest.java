@@ -24,8 +24,8 @@ public class ProductRequest {
     @Min(value = 0, message = "Stock must be non-negative")
     private Integer stock;
 
-    @NotNull(message = "Category is required")
-    private Category category;
+    @NotBlank(message = "Category is required")
+    private String category;
 
     private Boolean active;
 }
