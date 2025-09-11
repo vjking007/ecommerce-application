@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import { AdminService } from '../../admin.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-order-list',
@@ -7,9 +9,21 @@ import { Component, OnInit } from '@angular/core';
 })
 export class OrderListComponent implements OnInit {
 
-  constructor() { }
+    orders: any[] = [];
 
-  ngOnInit(): void {
-  }
+    constructor(private adminService: AdminService, private router: Router) {}
 
+    ngOnInit(): void {
+      this.loadOrders();
+    }
+
+    loadOrders() {
+      this.adminService.getAllOrders().subscribe((res) => {
+        this.orders = res;
+      });
+    }
+
+    viewOrderDetails(orderId: number) {
+      this.router.navigate(['/admin/orders', orderId]);
+    }
 }

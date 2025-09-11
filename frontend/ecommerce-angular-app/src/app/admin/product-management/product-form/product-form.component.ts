@@ -9,7 +9,7 @@ import { AdminService } from '../../admin.service';
 })
 export class ProductFormComponent implements OnInit {
 
-     product: any = { name: '', description:'', price: 0, stock: 0, category:'', active:0 };
+     product: any = { name: '', description:'', price: 1.0, stock: 0, category:'', active:false };
      isEdit = false;
      productId!: number;
 
@@ -39,16 +39,21 @@ export class ProductFormComponent implements OnInit {
         });
       } else {
       //save new product
-        this.adminService.createProduct(this.product).subscribe(() => {
-        next:()={
-          alert('Product added successfully');
-          this.router.navigate(['/admin/products']);
-          }
+        this.adminService.createProduct(this.product).subscribe({
+            next:()=>{
+                alert('Product added successfully');
+                this.router.navigate(['/admin/products']);
+                },
+                error:(err)=>{
+                console.error('Error saving product', err);
+                alert('Something went wrong while saving the product.');
+                }
         });
       }
     }
 
     toggleActive(product: any) {
-      product.isActive = product.isActive ? 1 : 0;   // checkbox true/false convert into 1/0
+      product.active = product.active;
+     // product.isActive = product.isActive ? 1 : 0; // checkbox true/false convert into 1/0
     }
 }
