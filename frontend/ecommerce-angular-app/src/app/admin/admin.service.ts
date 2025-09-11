@@ -20,7 +20,8 @@ export class AdminService {
   }
 
   createProduct(product: any): Observable<any> {
-    return this.http.post<any>(`${this.baseUrl}/products`, product);
+  console.log(product);
+    return this.http.post<any>(`${this.baseUrl}/products/save`, product);
   }
 
   updateProduct(id: number, product: any): Observable<any> {
@@ -32,7 +33,7 @@ export class AdminService {
   }
 
   // ✅ Orders
-  getOrders(): Observable<any[]> {
+  getAllOrders(): Observable<any[]> {
     return this.http.get<any[]>(`${this.baseUrl}/orders`);
   }
 

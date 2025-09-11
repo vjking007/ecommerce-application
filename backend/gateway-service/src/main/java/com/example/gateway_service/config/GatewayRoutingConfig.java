@@ -22,7 +22,7 @@
                                     f.filter(jwtAuthenticationFilter))
                             .uri("lb://product-service"))
 
-                    //Product-Service (Product Service Call)
+                    //Cart-Service (Cart Service Call)
                     .route("cart-service", r -> r.path("/api/cart/**")
                             .filters(f ->
                                     f.filter(jwtAuthenticationFilter))

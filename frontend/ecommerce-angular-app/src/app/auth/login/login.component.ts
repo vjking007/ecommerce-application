@@ -52,7 +52,7 @@ export class LoginComponent {
        this.authService.setLoggedInUsername(username!);
 
        if(role==='ADMIN'){
-         this.router.navigate(['/admin/products']);
+         this.router.navigate(['/admin']);
        } else {
           this.router.navigate(['/products']);
        }
