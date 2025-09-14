@@ -28,6 +28,12 @@
                                     f.filter(jwtAuthenticationFilter))
                             .uri("lb://cart-service"))
 
+                    //Order-Service (Order Service Call)
+                    .route("order-service", r -> r.path("/api/admin/**")
+                            .filters(f ->
+                                    f.filter(jwtAuthenticationFilter))
+                            .uri("lb://order-service"))
+
                     .build();
         }
     }

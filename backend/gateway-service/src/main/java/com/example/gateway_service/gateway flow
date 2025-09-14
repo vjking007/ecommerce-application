@@ -1,0 +1,25 @@
+Client Request
+   ↓
+Gateway Entry Point
+   ↓
+→ GatewayRoutingConfig (Match path → route)
+   ↓
+→ Global Filters (e.g., JWTAuthenticationFilter)
+       ↓
+   RouteValidator used inside Filter (secured vs open route)
+       ↓
+   Auth Service Call (JWT validate)
+       ↓
+→ Security Config Check (if using Spring Security at gateway)
+       ↓
+Request Forwarded to Target Microservice (user-service, order-service, etc.)
+
+---------------------------------------------------------------------------------------
+1. Client Request →
+2. CorsGlobalConfiguration: Handle CORS →
+3. GatewayRoutingConfig: Match route →
+4. JwtAuthenticationFilter (GlobalFilter):
+       └─ RouteValidator used inside it
+       └─ Call auth-service to validate token →
+5. GatewaySecurityConfig (if applicable): Authorize exchange →
+6. Forward to Target Microservice (user-service, etc.)
