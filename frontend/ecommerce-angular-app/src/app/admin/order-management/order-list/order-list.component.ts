@@ -19,6 +19,7 @@ export class OrderListComponent implements OnInit {
 
     loadOrders() {
       this.adminService.getAllOrders().subscribe((res) => {
+      console.log("HI "+res);
         this.orders = res;
       });
     }

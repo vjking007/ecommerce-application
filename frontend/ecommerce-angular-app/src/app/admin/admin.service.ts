@@ -34,7 +34,7 @@ export class AdminService {
 
   // ✅ Orders
   getAllOrders(): Observable<any[]> {
-    return this.http.get<any[]>(`${this.baseUrl}/orders`);
+    return this.http.get<any[]>(`${this.baseUrl}/admin/orders`);
   }
 
   getOrder(id: number): Observable<any> {
